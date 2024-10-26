@@ -1,0 +1,6 @@
+export const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+
+export const GOOGLE_CLOUD_TEXT_TO_SPEECH_API_KEY = process.env.GOOGLE_CLOUD_TEXT_TO_SPEECH_API_KEY || "";
+
+export const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || "";
+export const CLOUDFLARE_R2_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || "";
