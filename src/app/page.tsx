@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col justify-center items-center gap-6 min-h-svh">
-      <h1 className="text-2xl font-bold">Noah English</h1>
+      <h1 className="text-2xl font-bold">Noah POC</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-[340px]">
         <div className="flex flex-col gap-2">

@@ -7,19 +7,21 @@ import { BUCKET_NAME, s3Client } from "./clients/s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export async function generateListeningPart4Scenario() {
+  console.log("Start generating listening part 4 scenario");
+
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4o",
     messages: [
       {
         role: "user",
-        content: `Generate a scenario for IELTS listening test part 4, a monologue in an academic context.
+        content: `Generate a scenario for IELTS listening test part 4, a monologue in an academic context in the following pattern:
 
                   Example Output:
-                    - a literature student giving a talk about Victor Hugo, a famous 19th century French writer.
-                    - a history student giving part of a presentation about changes in british society in the 19th century.
-                    - part of an environmental science lecture about microplastics.
-                    - a lecturer on a fashion design course introducing the subject of hand knitting which involves making things like woolen jumpers and scarves.
-                    - an anthropology student giving a presentation on spiral path designs known as Labyrinth.
+                    1. a literature student giving a talk about Victor Hugo, a famous 19th century French writer.
+                    2. a history student giving part of a presentation about changes in british society in the 19th century.
+                    3. part of an environmental science lecture about microplastics.
+                    4. a lecturer on a fashion design course introducing the subject of hand knitting which involves making things like woolen jumpers and scarves.
+                    5. an anthropology student giving a presentation on spiral path designs known as Labyrinth.
                     
                   Only output a scenario in 1 sentence, beginning with lowercase`,
       },
@@ -47,6 +49,8 @@ export async function generateListeningTest(scenario: string) {
   // await new Promise((resolve) => setTimeout(resolve, 10000));
   // return { audioscript: AUDIOSCRIPT.replace(/\\n/g, "\n").replace(/"/g, ""), questionset: JSON.parse(QUESTIONSET) };
 
+  console.log("Start generating listening test");
+
   const monologue = await openai.chat.completions.create({
     model: "ft:gpt-4o-mini-2024-07-18:personal:listening-poc-002:ALUInKoc",
     messages: [
@@ -57,10 +61,10 @@ export async function generateListeningTest(scenario: string) {
       },
       {
         role: "user",
-        content: `Write an 800-word monologue for the scenario: ${scenario}.`,
+        content: `Write 800 words monologue for the scenario: ${scenario}. You must write 800 words.`,
       },
     ],
-    temperature: 0.5,
+    temperature: 0.8,
   });
   if (monologue.choices[0].finish_reason !== "stop") {
     throw new Error("Insufficient tokens to complete the task");
@@ -92,7 +96,7 @@ export async function generateListeningTest(scenario: string) {
         content: `Generate 10 completion questions based on the provided monologue. The questions should be formatted in HTML where each blank is represented by {{31}}. Each {{31}} indicates a specific word from the monologue, numbered sequentially (e.g., {{31}}, {{32}}). The blank should correspond to a single word from the monologue, and must not be a conjunction, jargon, or technical term. Output the result as JSON only, without additional \`\`\`json tag. You must generate exactly 10 questions.`,
       },
     ],
-    temperature: 0,
+    temperature: 0.4,
   });
   if (questions.choices[0].finish_reason !== "stop") {
     throw new Error("Insufficient tokens to complete the task");
@@ -114,9 +118,10 @@ export async function generateAudio(audioscript: string) {
   //     expiresIn: 3600,
   //   }
   // );
+  console.log("Start generating audio");
 
   const [response] = await textToSpeechClient.synthesizeSpeech({
-    input: { text: audioscript },
+    input: { text: audioscript.replaceAll("<<BREAK>>", "") },
     voice: { name: "en-GB-Journey-D", languageCode: "en-GB" },
     audioConfig: { audioEncoding: "MP3" },
   });

@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
-  title: "Noah English POC",
+  title: "Noah POC",
 };
 
 const inter = Inter({ subsets: ["latin"] });
